@@ -135,7 +135,7 @@ void receiveEvent(int howMany) {
         }
       }
 
-      //matrix.drawRGBBitmap(0, 0, Image_Buffer[0], 32, 32);  //LEDmatrixPanelにカメラ画像を表示
+      matrix.drawRGBBitmap(0, 0, Image_Buffer[0], 32, 32);  //LEDmatrixPanelにカメラ画像を表示
       pixelY = 0;
       pixelX = 0;
       pixelcount = 0;
