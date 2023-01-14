@@ -20,8 +20,8 @@
 
 
 
-#define SDA_PIN 21
-#define SCL_PIN 22
+#define SDA_PIN 13
+#define SCL_PIN 4
 #define I2C_SLAVE_ADDR 0x04
 
 #define BLE_LOCAL_NAME "Smart-Sticker11"
@@ -69,8 +69,14 @@ class MyCallbacks : public BLECharacteristicCallbacks {
 
 void setup() {
   Serial.begin(500000);
-  Wire.begin(I2C_SLAVE_ADDR);
-  delay(10);
+  //Wire.begin(I2C_SLAVE_ADDR);
+  //Wire.begin(I2C_SLAVE_ADDR, SDA_PIN, SCL_PIN); 
+   bool success = WireSlave.begin(SDA_PIN, SCL_PIN, I2C_SLAVE_ADDR);
+
+  delay(100);
+  matrix.begin();
+  //matrix.clear();
+  delay(100);
 
   //////////////////////////Ble通信の開始//////////////////////////////////
 
@@ -90,14 +96,7 @@ void setup() {
 
   ////////////////////////////////////////////////////////////////////////
 
-  Serial.println("test2");
-  Serial.println("test1");
 
-
-
-
-
-  bool success = WireSlave.begin(SDA_PIN, SCL_PIN, I2C_SLAVE_ADDR);
   if (!success) {
     Serial.println("I2C slave init failed");
     while (1) delay(100);
@@ -109,7 +108,10 @@ void setup() {
 void loop() {
   //Serial.println("test4");
 
+
   WireSlave.update();
+  //matrix.drawRGBBitmap(0, 0, car_sample[0], 32, 21);  //LEDmatrixPanelにカメラ画像を表示
+  //matrix.drawPixel(10, 10, 10);
   //Serial.println("test5");
 
   delay(1);
