@@ -52,6 +52,9 @@ char Buf[50];
 uint16_t num = 0;
 
 
+
+
+
 uint16_t car_sample[21][32]{
   { 0, 0, 0, 0, 0, 0, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, 0, 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0, WHITE, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, Blue, WHITE, 0, 0, 0, 0, 0 },
@@ -135,6 +138,8 @@ void receiveEvent(int howMany) {
 
     //ヘッダの文字が出たらその処理を始める
     //その処理をしてみるのはどう？
+    matrix.drawRGBBitmap(0, 0, Image_Buffer[0], 32, 32);
+
 
     if (WireSlave.read() == frag) {
       cR = WireSlave.read();  //uint8_t型のRed値を読み取り color565
@@ -147,45 +152,18 @@ void receiveEvent(int howMany) {
       int ty =  WireSlave.read(); 
 
 
+      //////////////受け取ったそれぞれのRGB値をいじるところ/////////////////////
+      //uint16_t Rgb565 = (((cR & 0b11111000)<<8) + ((cG & 0b11111100)<<3)+(cB>>3));
+      uint16_t Rgb565 = (((cR & 0xf8)<<8) + ((cG & 0xfc)<<3)+(cB>>3));
       
 
-      //////////////受け取ったそれぞれのRGB値をいじるところ/////////////////////
-
-      //rgbを文字列につなげる
-      //int rgb_set = RGB.toInt();             //intに変換
       String r = String(cR);     
       String g = String(cG);     
       String b = String(cB);
       String rgb = r + g + b;
-      uint16_t rgb_set = rgb.toInt(); //10進数
-  
-
-      String rgb_16x = String(rgb_set,HEX); 
-      rgb_16x.toCharArray(Buf, 50);//bufに入っている
-      //rgb.toCharArray(Buf, 50);//bufに入っている
-      num = rgb_16x.toInt();
-
-      //char* y = Buf;
      
-      //sscanf(Buf, "%x", num);
-      
-
-
-      //uint16_t rgbtest = rgb_16x.toInt();//ここで値が変
-      //uint16_t bb = Buf.toInt();
-    
-
-  
-    Serial.print("rgb = ");  //デバック用
-    Serial.println(rgb);       //デバック用
-    Serial.print("rgbset = ");          //デバック用
-    Serial.println(rgb_set);             //デバック用
-    Serial.print("rgb_16x = "); //文字列16進数         //デバック用
-    Serial.println(rgb_16x);             //デバック用
-    Serial.print("Buf = "); //char 16進数         //デバック用
-    Serial.println(Buf);   
-    Serial.print("u = ");   //int 16進数       //デバック用
-    Serial.println(num);   
+    Serial.print("Rgb565 = ");   //int 16進数       //デバック用
+    Serial.println( Rgb565 );   
  
 
       //////////////////////////////////////////////////////////////////////////
@@ -193,18 +171,15 @@ void receiveEvent(int howMany) {
       ///////////////受け取ったそれぞれのRGB値をカラーコードに変換し、32*32の配列に入れる///////////////
 
 
-      //Image_Buffer[ty][tx] = Buf ;
+      Image_Buffer[ty][tx] = Rgb565;
+      matrix.drawRGBBitmap(0, 0, Image_Buffer[0], 32, 32);
+
         /*Serial.print("Image_Buffer[");
           Serial.print(ty);
           Serial.print("][");
           Serial.print(tx);
-          Serial.print("]=");
-          Serial.println(Image_Buffer[ty][tx]);*/
-      //Image_Buffer[pixelY][pixelX] = matrix.Color444(cR, cG, cB);  //配列の各ピクセルのからコードを格納
-      //Image_Buffer[pixelY][pixelX] = ;  //配列の各ピクセルのからコードを格納
-      //Serial.print("matrix.color444 = ");                        //デバック用
-      //Serial.println( matrix.Color444(cR, cG, cB));                 //デバック用
-      //matrix.drawRGBBitmap(0, 0, Image_Buffer[0], 32, 32);  //LEDmatrixPanelにカメラ画像を表示
+          Serial.print("]=");*/
+    
 
       /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -214,17 +189,6 @@ void receiveEvent(int howMany) {
         for (int j = 0; j < 32; j++) {
           for (int i = 0; i < 32; i++) {
 
-            /////////////デバック用////////////////////////
-
-            /*Serial.print("Image_Buffer[");
-          Serial.print(j);
-          Serial.print("][");
-          Serial.print(i);
-          Serial.print("]=");
-          Serial.println(Image_Buffer[i][j]);*/
-
-
-            ///////////////////////////////////////////////
           }
         }
         pixelY = 0;
